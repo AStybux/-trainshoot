@@ -9,6 +9,7 @@ tf.f="assets/font/mf.ttf"
 tf.s=16
 
 local t={} --> #ревизия 11.05.2025
+t.s=24
 t.sx=24
 t.sy=4
 t.x=0
@@ -133,9 +134,73 @@ local function button_settings() --> #ревизия 11.05.2025
     settingsButton.alpha = 0.5
 end 
 
+local function mouse_settings()
+    native.setProperty( "mouseCursorVisible", false )
+
+    local cursor = display.newImage("assets/images/arrow.png")
+
+    cursor.x, cursor.y = display.contentCenterX, display.contentCenterY
+    cursor:scale(8,8)
+    cursor.fill.effect = "filter.pixelate"
+    
+    cursor.fill.effect.numPixels = 1
+    local function onMouse(event)
+
+        cursor.x = event.x
+        cursor.y = event.y
+        return true
+    end
+
+    Runtime:addEventListener("mouse", onMouse)
+end
+
+local function button_attack()
+    local imagePath1 = "assets/images/attack/1.png"
+    local imagePath2 = "assets/images/attack/2.png"
+
+
+    local button = display.newImage(imagePath1, display.contentCenterX, display.contentCenterY)
+
+    button.fill.effect = "filter.pixelate"
+    button.fill.effect.numPixels = 1
+    local margin = 20
+    button.x = bd.w - margin - button.width / 2 - t.s*4
+    button.y = bd.h - margin - button.height / 2 - t.sx*2
+    button:scale(4,4)
+    local isFirstImage = true
+
+    local function onButtonTouch(event)
+        if event.phase == "ended" then
+            if isFirstImage then
+                button:removeSelf()
+                button = display.newImage(imagePath2, display.contentCenterX, display.contentCenterY)
+                isFirstImage = false
+            else
+                button:removeSelf()
+                button = display.newImage(imagePath1, display.contentCenterX, display.contentCenterY)
+                isFirstImage = true
+            end
+            button.fill.effect = "filter.pixelate"
+            button.fill.effect.numPixels = 1
+            local margin = 20
+            button.x = bd.w - margin - button.width / 2 - t.s*4
+            button.y = bd.h - margin - button.height / 2 - t.sx*2   
+            button:scale(4,4)   
+            button:addEventListener("touch", onButtonTouch)
+        end
+        return true
+    end
+
+    button:addEventListener("touch", onButtonTouch)
+end
+
+-- mouse_settings() --> для win(desktop)
+
 createSkyGradient(f.h, f.z)
 f.s = createStars(f.q)
 trtdnt.m=trt_main()
 track()
 button_settings()
+button_attack()
 Runtime:addEventListener("enterFrame", frame_main)
+
